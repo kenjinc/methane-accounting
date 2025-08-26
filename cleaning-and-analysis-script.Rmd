@@ -1,0 +1,10 @@
+---
+title: "data scrcleaning-and-analysis"
+output: github_document
+date: "2025-08-26"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+

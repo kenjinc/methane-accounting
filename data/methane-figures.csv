@@ -1,0 +1,54 @@
+﻿food,methane from flooded rice,enteric methane,manure management,ghg emissions with selected methane factor
+Beer,-,-,-,1.18
+Wine,-,-,-,1.79
+Tomatoes,-,-,-,2.09
+Onions and Leeks,-,-,-,0.5
+Root Vegetables,-,-,-,0.43
+Cabbages and Other Brassicas,-,-,-,0.51
+Other Vegetables,-,-,-,0.53
+Citrus Fruit,-,-,-,0.39
+Bananas,-,-,-,0.86
+Apples,-,-,-,0.43
+Berries and Grapes,-,-,-,1.53
+Other Fruit,-,-,-,1.05
+Avocado,-,-,-,2.480877984
+Soymilk,-,-,-,0.98
+Milk,-,0.833587651,0.164719602,3.15
+Almond milk,-,-,-,0.702077383
+Oat milk,-,-,-,0.903126194
+Rice milk,0.29832153,-,-,1.181659182
+Soybeans (Oil),-,-,-,6.32
+Palm (Oil),-,-,-,7.32
+Sunflower (Oil),-,-,-,3.6
+Rapeseed (Oil),-,-,-,3.77
+Olives (Oil),-,-,-,5.42
+Beans & Pulses,-,-,-,1.79
+Peas,-,-,-,0.98
+Nuts,-,-,-,0.43
+Groundnuts,-,-,-,3.23
+Tofu,-,-,-,3.16
+Bovine Meat (Beef Herd),-,41.12140288,1.693754745,99.48
+Bovine Meat (Dairy Herd),-,13.12901286,0.837581536,33.3
+Beef (avg),-,29.04801096,1.328839041,70.50210635
+Mutton & Goat Meat,-,20.11245975,0.493991841,39.72
+Pig Meat,-,0.154919973,0.571451936,12.31
+Poultry Meat,-,0.013397274,0.061416599,9.87
+Cheese,-,7.118645187,1.363599071,23.88
+Eggs,-,0.012962666,0.079510018,4.67
+Fish (farmed),-,-,4.07,13.63
+Crustaceans (farmed),-,-,4.16,26.87
+Bread,-,-,-,1.57
+Maize Meal,-,-,-,1.7
+Oatmeal,-,-,-,2.48
+Rice,2.486012747,-,-,4.45
+Potatoes,-,-,-,0.46
+Cassava and Other Roots,-,-,-,1.32
+Coffee,-,-,-,28.53
+Tea,-,-,-,21
+Chocolate,-,-,-,46.65
+Sugar (from sugar cane),-,-,-,3.2
+Sugar (from sugar beet),-,-,-,1.81
+Dark Chocolate (70% cocoa),-,-,-,33.807
+Milk Chocolate,-,-,-,23.42395455
+Pasta,-,-,-,1.609541094
+Lentils,-,-,-,2.819059498
