@@ -1,0 +1,7 @@
+﻿meals,count,category,serving_weight,total_weight,emissions_factor,ghg_emissions
+chicken,4000000,replaced,4,453592,4.4,1995804.8
+beef,2000000,replaced,4,226796,41.35,9378014.6
+pork,2000000,replaced,4,226796,9.83,2229404.68
+fish,2000000,replaced,4,226796,4.98,1129444.08
+tofu,5000000,replacing,3,425242.5,1.75,744174.375
+lentils,5000000,replacing,1,141747.5,1.68,238135.8

@@ -1,10 +1,199 @@
 ---
-title: "data scrcleaning-and-analysis"
+title: "Data Cleaning and Analysis"
 output: github_document
 date: "2025-08-26"
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+```
+
+## package loading
+
+```{r}
+library(tidyverse)
+library(ggpubr)
+library(viridis)
+```
+
+## data loading
+
+```{r}
+methane_figures <- read.csv("/Users/kenjinchang/github/methane-accounting/data/methane-figures.csv")
+pilot_data <- read.csv("/Users/kenjinchang/github/methane-accounting/data/pilot-summary.csv")
+```
+
+## `methane_figures` cleaning
+
+```{r}
+methane_figures
+```
+
+
+```{r}
+methane_figures <- methane_figures %>%
+  mutate(methane.from.flooded.rice=as.numeric(methane.from.flooded.rice)) %>%
+  mutate(enteric.methane=as.numeric(enteric.methane)) %>%
+  mutate(manure.management=as.numeric(manure.management)) %>%
+  replace(is.na(.),0) %>%
+  mutate(total.methane=methane.from.flooded.rice+enteric.methane+manure.management) %>%
+  mutate(percent.methane=total.methane/ghg.emissions.with.selected.methane.factor) %>%
+  mutate(ghg.emissions.excluding.methane=ghg.emissions.with.selected.methane.factor-total.methane) %>%
+  mutate(percent.not.methane=1-percent.methane)
+```
+
+```{r}
+methane_figures %>%
+  arrange(desc(percent.methane)) %>%
+  filter(food=="Beef (avg)"|food=="Pig Meat"|food=="Poultry Meat"|food=="Fish (farmed)"|food=="Tofu"|food=="Lentils") %>%
+  head(10)
+```
+
+
+```{r}
+absolute_methane_contribution <- methane_figures %>%
+  select(food,total.methane,ghg.emissions.excluding.methane) %>%
+  pivot_longer(!food,names_to="category",values_to="kgco2e") %>%
+  filter(food=="Beef (avg)"|food=="Pig Meat"|food=="Poultry Meat"|food=="Fish (farmed)"|food=="Tofu"|food=="Lentils") %>%
+  ggplot(aes(x=kgco2e,y=food,fill=category)) + 
+  geom_col() + 
+  scale_y_discrete(limits=c("Lentils","Tofu","Poultry Meat","Pig Meat","Fish (farmed)","Beef (avg)"),labels=c("Legumes","Tofu","Chicken","Pork","Fish","Beef")) +
+  scale_fill_manual(values=c("royalblue4","mediumseagreen"),name="",labels=c("GHG emissions, excluding methane","GHG emissions from methane")) +
+  xlab(bquote('Emissions Per Kilogram (kg CO'[2]*'e)')) +
+  ylab("") +
+  theme(legend.position="bottom",panel.grid=element_blank(),panel.background=element_rect(fill="white"),panel.border=element_rect(fill=NA),legend.title=element_text(size=10),legend.text=element_text(size=10),plot.title=element_text(size=10))
+```
+
+
+```{r}
+relative_methane_contribution <- methane_figures %>%
+  select(food,percent.methane,percent.not.methane) %>%
+  pivot_longer(!food,names_to="category",values_to="percent") %>%
+  filter(food=="Beef (avg)"|food=="Pig Meat"|food=="Poultry Meat"|food=="Fish (farmed)"|food=="Tofu"|food=="Lentils") %>%
+  ggplot(aes(x=percent,y=food,fill=category)) + 
+  geom_col() +
+   scale_y_discrete(limits=c("Lentils","Tofu","Poultry Meat","Pig Meat","Fish (farmed)","Beef (avg)"),labels=c("Legumes","Tofu","Chicken","Pork","Fish","Beef")) +
+  scale_fill_manual(values=c("royalblue4","mediumseagreen"),name="",labels=c("Percent attributable to methane","Percent not attributable to methane")) +
+  xlab("Percent (%)") +
+  ylab("") + 
+  theme(legend.position="bottom",panel.grid=element_blank(),panel.background=element_rect(fill="white"),panel.border=element_rect(fill=NA),legend.title=element_text(size=10),legend.text=element_text(size=10),plot.title=element_text(size=10))
+```
+
+```{r}
+methane_contribution_array <- ggarrange(absolute_methane_contribution,relative_methane_contribution,
+         labels=c("A","B"))
+ggsave(filename="methane.contribution.array.png",plot=methane_contribution_array,path="/Users/kenjinchang/github/methane-accounting/figures",width=40,height=12,units="cm",dpi=150,limitsize=TRUE)
+methane_contribution_array
+```
+
+## `pilot_data` cleaning
+
+```{r}
+pilot_data
+```
+
+
+```{r}
+protein_distribution_plot <- pilot_data %>%
+  ggplot(aes(x=count,y=category,fill=meals)) + 
+  geom_col() + 
+  scale_fill_brewer(palette="Set3",labels=c("Beef","Chicken","Fish","Legumes","Pork","Tofu"),name="") +
+  scale_y_discrete(limits=c("replaced","replacing"),labels=c("Replaced Meals","Replacing Meals")) +
+  scale_x_continuous(labels=scales::comma) +
+  xlab("Number of Meals") + 
+  ylab("") + 
+  theme(legend.position="bottom",panel.grid=element_blank(),panel.background=element_rect(fill="white"),panel.border=element_rect(fill=NA),legend.title=element_text(size=10),legend.text=element_text(size=10),plot.title=element_text(size=10))
+```
+
+```{r}
+protein_emissions_plot <- pilot_data %>%
+  mutate(ghg_emissions=ghg_emissions/1000) %>%
+  ggplot(aes(x=ghg_emissions,y=category,fill=meals)) + 
+  geom_col() + 
+  scale_fill_brewer(palette="Set3",labels=c("Beef","Chicken","Fish","Legumes","Pork","Tofu"),name="") +
+  scale_y_discrete(limits=c("replaced","replacing"),labels=c("Replaced Meals","Replacing Meals")) +
+  scale_x_continuous(labels=scales::comma) +
+  xlab(bquote('Volume of Emissions (Metric Tons of CO'[2]*'e)')) +
+  ylab("") + 
+  theme(legend.position="bottom",panel.grid=element_blank(),panel.background=element_rect(fill="white"),panel.border=element_rect(fill=NA),legend.title=element_text(size=10),legend.text=element_text(size=10),plot.title=element_text(size=10))
+```
+
+```{r}
+emissions_array <- ggarrange(protein_distribution_plot,protein_emissions_plot,
+          labels=c("A","B"),
+          nrow=2)
+ggsave(filename="overall.emissions.array.png",plot=emissions_array,path="/Users/kenjinchang/github/methane-accounting/figures",width=40,height=24,units="cm",dpi=150,limitsize=TRUE)
+emissions_array
+```
+
+```{r}
+pilot_data %>%
+  group_by(category) %>%
+  summarise(sum(ghg_emissions))
+```
+
+```{r}
+prejoin_pilot_data <- pilot_data %>%
+  mutate(meals=case_when(meals=="lentils"~"Legumes",
+                         meals=="tofu"~"Tofu",
+                         meals=="fish"~"Fish",
+                         meals=="pork"~"Pork",
+                         meals=="beef"~"Beef",
+                         meals=="chicken"~"Chicken"))
+prejoin_pilot_data
+```
+
+```{r}
+prejoin_methane_figures <- methane_figures %>%
+  filter(food=="Beef (avg)"|food=="Pig Meat"|food=="Poultry Meat"|food=="Fish (farmed)"|food=="Tofu"|food=="Beans & Pulses") %>%
+  mutate(meals=case_when(food=="Beans & Pulses"~"Legumes",
+                        food=="Tofu"~"Tofu",
+                        food=="Beef (avg)"~"Beef",
+                        food=="Pig Meat"~"Pork",
+                        food=="Poultry Meat"~"Chicken",
+                        food=="Fish (farmed)"~"Fish"))
+prejoin_methane_figures
+```
+
+```{r}
+joined_data <- left_join(prejoin_methane_figures,prejoin_pilot_data,by="meals") %>%
+  select(meals,category,ghg_emissions,percent.methane,percent.not.methane) %>%
+  mutate(methane_emissions=ghg_emissions*percent.methane) %>%
+  mutate(nonmethane_emissions=ghg_emissions*percent.not.methane)
+```
+
+```{r}
+joined_data
+```
+
+```{r}
+joined_data %>%
+  group_by(category) %>%
+  summarise(associated_nonmethane_costs=sum(nonmethane_emissions),associated_methane_costs=sum(methane_emissions),associated_emissions_costs=sum(ghg_emissions))
+```
+
+```{r}
+year <- as.character(2024)
+methane_reduction <- 4524589
+emissions_reduction <- 14732668.2-982310.2
+nonmmethane_reduction <- 10208078.7-982310.2
+impact_data <- tibble(year,emissions_reduction,nonmmethane_reduction,methane_reduction)
+impact_data
+```
+
+```{r}
+annual_impact_plot <- impact_data %>%
+  select(year,nonmmethane_reduction,methane_reduction) %>%
+  pivot_longer(!year,values_to="value",names_to="reduction") %>%
+  mutate(value=value/1000) %>%
+  ggplot(aes(x=value,y=year,fill=reduction)) + 
+  geom_col() + 
+  scale_fill_manual(values=c("royalblue4","mediumseagreen"),name="",labels=c("Reductions in methane","Reductions in GHG emissions, excluding methane")) +
+  scale_x_continuous(labels=scales::comma) +
+  ylab("") + 
+  xlab(bquote('Reduction Volume (Metric Tons of CO'[2]*'e)')) +
+  theme(legend.position="bottom",panel.grid=element_blank(),panel.background=element_rect(fill="white"),panel.border=element_rect(fill=NA),legend.title=element_text(size=10),legend.text=element_text(size=10),plot.title=element_text(size=10))
+ggsave(filename="annual.impact.png",plot=annual_impact_plot,path="/Users/kenjinchang/github/methane-accounting/figures",width=40,height=12,units="cm",dpi=150,limitsize=TRUE)
+annual_impact_plot
 ```
 
