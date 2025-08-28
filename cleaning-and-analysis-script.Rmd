@@ -89,7 +89,7 @@ methane_contribution_array
 ## `pilot_data` cleaning
 
 ```{r}
-pilot_data
+pilot_data #10 mil count derived from 131 sites added throughout 2024, 200 sites added through 2025, and the 850k annually via NYC H+H,
 ```
 
 
@@ -97,7 +97,7 @@ pilot_data
 protein_distribution_plot <- pilot_data %>%
   ggplot(aes(x=count,y=category,fill=meals)) + 
   geom_col() + 
-  scale_fill_brewer(palette="Set3",labels=c("Beef","Chicken","Fish","Legumes","Pork","Tofu"),name="") +
+  scale_fill_viridis_d(option="mako",labels=c("Beef","Chicken","Fish","Legumes","Pork","Tofu"),name="") +
   scale_y_discrete(limits=c("replaced","replacing"),labels=c("Replaced Meals","Replacing Meals")) +
   scale_x_continuous(labels=scales::comma) +
   xlab("Number of Meals") + 
@@ -110,7 +110,7 @@ protein_emissions_plot <- pilot_data %>%
   mutate(ghg_emissions=ghg_emissions/1000) %>%
   ggplot(aes(x=ghg_emissions,y=category,fill=meals)) + 
   geom_col() + 
-  scale_fill_brewer(palette="Set3",labels=c("Beef","Chicken","Fish","Legumes","Pork","Tofu"),name="") +
+  scale_fill_viridis_d(option="mako",labels=c("Beef","Chicken","Fish","Legumes","Pork","Tofu"),name="") +
   scale_y_discrete(limits=c("replaced","replacing"),labels=c("Replaced Meals","Replacing Meals")) +
   scale_x_continuous(labels=scales::comma) +
   xlab(bquote('Volume of Emissions (Metric Tons of CO'[2]*'e)')) +
@@ -188,8 +188,9 @@ annual_impact_plot <- impact_data %>%
   mutate(value=value/1000) %>%
   ggplot(aes(x=value,y=year,fill=reduction)) + 
   geom_col() + 
-  scale_fill_manual(values=c("royalblue4","mediumseagreen"),name="",labels=c("Reductions in methane","Reductions in GHG emissions, excluding methane")) +
+  scale_fill_manual(values=c("royalblue4","mediumseagreen"),name="",labels=c("Methane reduction","GHG reduction, excluding methane")) +
   scale_x_continuous(labels=scales::comma) +
+  scale_y_discrete(labels="2024-2025") +
   ylab("") + 
   xlab(bquote('Reduction Volume (Metric Tons of CO'[2]*'e)')) +
   theme(legend.position="bottom",panel.grid=element_blank(),panel.background=element_rect(fill="white"),panel.border=element_rect(fill=NA),legend.title=element_text(size=10),legend.text=element_text(size=10),plot.title=element_text(size=10))
